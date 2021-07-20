@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@openzeppelin/contracts": "^4.2.0",
     "ethers": "^5.4.1"
   }
 }
