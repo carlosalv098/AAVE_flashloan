@@ -13,6 +13,7 @@ contract AaveFlashloan is FlashLoanReceiverBase {
         address token;
         uint amount;
     }
+    address public tokenBorrowed;
 
     event Log(string message, uint value);
     event LogAsset(string message, address token);
@@ -22,7 +23,8 @@ contract AaveFlashloan is FlashLoanReceiverBase {
 
     function flashLoan(address _token, uint _amount) external {
         uint token_balance = IERC20(_token).balanceOf(address(this));
-        require(token_balance > _amount, 'token balance has to be higher that the amount borrowed');
+        uint min_amount = _amount.div(50);
+        require(token_balance > min_amount, 'token balance has to be higher than 10% of the amount borrowed');
 
         address receiverAddress = address(this);
 
@@ -69,7 +71,7 @@ contract AaveFlashloan is FlashLoanReceiverBase {
                 Data memory data_decoded = abi.decode(params, (Data));
 
                 if(assets.length == 1) {
-                    address tokenBorrowed = assets[0];
+                    tokenBorrowed = assets[0];
                     uint amountBorrowed = amounts[0];
                     uint fee = premiums[0];
 
@@ -79,7 +81,7 @@ contract AaveFlashloan is FlashLoanReceiverBase {
                      *  arbitrage or liquidation code
                      */
 
-                    emit LogAsset('token', tokenBorrowed);
+                    //emit LogAsset('token', tokenBorrowed);
                     emit Log('borrowed', amountBorrowed);
                     emit Log('fee', fee);
                     emit Log('amount to pay back', amountBorrowed.add(fee));
